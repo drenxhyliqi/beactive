@@ -96,12 +96,12 @@ function QuizPreview() {
           key={o.t}
           className={`flex items-center justify-between rounded-lg border px-2.5 py-2 text-xs transition-colors ${
             o.ok
-              ? 'border-[color-mix(in_srgb,var(--success)_45%,transparent)] bg-[color-mix(in_srgb,var(--success)_12%,transparent)] text-text'
+              ? 'border-[color-mix(in_srgb,var(--primary)_40%,transparent)] bg-primary-soft text-primary'
               : 'border-border bg-background text-text-secondary'
           }`}
         >
           <span className="truncate">{o.t}</span>
-          {o.ok && <Check className="h-3.5 w-3.5 shrink-0 text-success" />}
+          {o.ok && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
         </div>
       ))}
     </div>

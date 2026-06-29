@@ -26,10 +26,10 @@ export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:pt-4">
       <div
-        className={`mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full border px-3 py-2 transition-all duration-300 ${
+        className={`mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full border bg-surface px-3 py-2 transition-all duration-300 sm:backdrop-blur-md ${
           scrolled
-            ? 'glass border-transparent shadow-lg'
-            : 'border-border/60 bg-surface/50 backdrop-blur-md'
+            ? 'border-transparent shadow-lg sm:bg-[color-mix(in_srgb,var(--surface)_70%,transparent)]'
+            : 'border-border/60 sm:bg-[color-mix(in_srgb,var(--surface)_50%,transparent)]'
         }`}
       >
         <Link href="/" aria-label="beactive home" className="flex items-center pl-2">

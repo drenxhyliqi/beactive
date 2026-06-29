@@ -182,56 +182,11 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Aurora ambient background — slow-drifting blurred blobs in the palette.
-   GPU-friendly transforms only; disabled under reduced-motion.
+   Film-grain noise overlay — desaturated fractal turbulence, tiled.
 --------------------------------------------------------------------------- */
 @layer utilities {
-  .aurora-drift-a {
-    animation: aurora-drift-a 22s ease-in-out infinite alternate;
-  }
-  .aurora-drift-b {
-    animation: aurora-drift-b 26s ease-in-out infinite alternate;
-  }
-  .aurora-drift-c {
-    animation: aurora-drift-c 30s ease-in-out infinite alternate;
-  }
-
-  /* Tiling film-grain noise (desaturated fractal turbulence). Overlay it at low opacity. */
   .grain {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
     background-repeat: repeat;
-  }
-}
-
-@keyframes aurora-drift-a {
-  from {
-    transform: translate3d(-6%, -4%, 0) scale(1);
-  }
-  to {
-    transform: translate3d(8%, 6%, 0) scale(1.15);
-  }
-}
-@keyframes aurora-drift-b {
-  from {
-    transform: translate3d(6%, 2%, 0) scale(1.1);
-  }
-  to {
-    transform: translate3d(-8%, -6%, 0) scale(0.95);
-  }
-}
-@keyframes aurora-drift-c {
-  from {
-    transform: translate3d(0, 4%, 0) scale(1);
-  }
-  to {
-    transform: translate3d(4%, -8%, 0) scale(1.2);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .aurora-drift-a,
-  .aurora-drift-b,
-  .aurora-drift-c {
-    animation: none;
   }
 }

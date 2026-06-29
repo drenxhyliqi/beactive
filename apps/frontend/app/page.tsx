@@ -26,10 +26,11 @@ export default function LandingPage() {
       </div>
 
       {/* Continuous film-grain across the whole page — one fixed layer so it never cuts at
-          section boundaries. */}
+          section boundaries. Desktop only: a full-screen mix-blend layer re-composites the whole
+          viewport on every scroll frame, which janks mobile; grain is imperceptible there anyway. */}
       <div
         aria-hidden
-        className="grain pointer-events-none fixed inset-0 z-[60] opacity-[0.3] mix-blend-soft-light"
+        className="grain pointer-events-none fixed inset-0 z-[60] hidden opacity-[0.3] mix-blend-soft-light md:block"
       />
     </>
   );

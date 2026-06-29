@@ -1,21 +1,21 @@
 /**
- * Static (non-animated) purple light that appears to shine up from below — a pair of soft,
- * heavily blurred radial glows anchored to the bottom edge of this wrapper. Decorative; pairs
- * with the page grain. Set the wrapper's vertical extent via `className`
- * (e.g. "top-0 bottom-1/4") to place the light beneath a block of content.
+ * Static (non-animated) purple light that appears to shine up from below — a pair of soft
+ * radial glows anchored to the bottom edge of this wrapper. Uses pure radial gradients (NO CSS
+ * `filter: blur`, which is ruinously expensive on mobile) — the transparent falloff already
+ * makes them soft. Set the wrapper's vertical extent via `className` (e.g. "top-0 bottom-1/4").
  */
 export function GlowBelow({ className }: { className?: string }) {
   return (
     <div aria-hidden className={`pointer-events-none absolute inset-x-0 z-0 ${className ?? ''}`}>
       {/* wide, faded halo */}
       <div
-        className="absolute bottom-[-5rem] left-1/2 h-[42rem] w-[82rem] max-w-[180%] -translate-x-1/2 translate-y-1/3 rounded-[50%] opacity-30 blur-[300px]"
-        style={{ background: 'radial-gradient(closest-side, var(--primary-light), transparent 92%)' }}
+        className="absolute bottom-[-8rem] left-1/2 h-[40rem] w-[80rem] max-w-[180%] -translate-x-1/2 rounded-[50%] opacity-40"
+        style={{ background: 'radial-gradient(closest-side, var(--primary-light), transparent 78%)' }}
       />
       {/* slightly tighter, warmer core */}
       <div
-        className="absolute bottom-0 left-1/2 h-[28rem] w-[48rem] max-w-[150%] -translate-x-1/2 translate-y-1/4 rounded-[50%] opacity-40 blur-[180px]"
-        style={{ background: 'radial-gradient(closest-side, var(--primary), transparent 70%)' }}
+        className="absolute bottom-[-3rem] left-1/2 h-[24rem] w-[44rem] max-w-[150%] -translate-x-1/2 rounded-[50%] opacity-45"
+        style={{ background: 'radial-gradient(closest-side, var(--primary), transparent 72%)' }}
       />
     </div>
   );

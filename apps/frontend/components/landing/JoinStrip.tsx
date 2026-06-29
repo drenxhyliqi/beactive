@@ -30,13 +30,6 @@ export function JoinStrip() {
       <div
         className="relative overflow-hidden rounded-3xl px-6 py-14 text-center shadow-[0_30px_80px_-30px_color-mix(in_srgb,var(--primary)_65%,transparent)] ring-1 ring-inset ring-white/10"
       >
-        {/* concentrated core of the glow, just below the card edge */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-14 left-1/2 h-72 w-[34rem] -translate-x-1/2 rounded-full opacity-70 blur-6xl"
-          // style={{ background: 'radial-gradient(circle, var(--primary-light), transparent 70%)' }}
-        />
-
         {/* fine grain to break up the flat fill */}
         <div
           aria-hidden

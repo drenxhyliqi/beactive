@@ -34,11 +34,11 @@ export function HowItWorks() {
       id="how-it-works"
       className="relative overflow-hidden border-y border-border bg-background"
     >
-      {/* Soft premium backdrop glow at the top of the section. */}
+      {/* Soft premium backdrop glow at the top of the section (gradient only — no costly blur). */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 h-80 w-[64rem] max-w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-60 blur-[150px]"
-        style={{ background: 'radial-gradient(closest-side, var(--primary-soft), transparent 70%)' }}
+        className="pointer-events-none absolute left-1/2 top-0 h-80 w-[64rem] max-w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] opacity-70"
+        style={{ background: 'radial-gradient(closest-side, var(--primary-soft), transparent 78%)' }}
       />
 
       <div className="relative mx-auto max-w-6xl px-6 py-24">

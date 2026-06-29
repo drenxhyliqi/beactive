@@ -1,7 +1,7 @@
 import { LoadingDots } from '@/components/LoadingDots';
 
-/** Shown while the audience live screen connects. */
-export default function JoinCodeLoading() {
+/** Default route-navigation fallback: centered bouncing dots. */
+export default function Loading() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <LoadingDots />

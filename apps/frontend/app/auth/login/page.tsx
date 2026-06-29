@@ -1,13 +1,8 @@
 import type { Metadata } from 'next';
-import { Placeholder } from '@/components/Placeholder';
+import { LoginView } from '@/components/auth/LoginView';
 
-export const metadata: Metadata = { title: 'Login' };
+export const metadata: Metadata = { title: 'Log in' };
 
 export default function LoginPage() {
-  return (
-    <Placeholder
-      title="Host Login"
-      description="Sign in to your host account — built in Step 2."
-    />
-  );
+  return <LoginView />;
 }

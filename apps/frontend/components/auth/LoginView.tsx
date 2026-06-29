@@ -7,27 +7,15 @@ import { Logo } from '@/components/landing/Logo';
 import { GoogleIcon } from '@/components/GoogleIcon';
 import { AuthAside } from '@/components/auth/AuthAside';
 
-interface SignupForm {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
-
 /**
- * Host signup page (mock-first): the shared participant code panel on the left and the host
- * sign-up form on the right with a "Sign up with Google" option. No real network calls yet — the
- * Google and submit handlers are ready stubs to be wired to the backend in a later step.
+ * Host login page (mock-first): the shared participant code panel on the left and the host log-in
+ * form on the right with a "Log in with Google" option. No real network calls yet — the Google and
+ * submit handlers are ready stubs to be wired to the backend in a later step.
  */
-export function RegisterView() {
-  const [form, setForm] = useState<SignupForm>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-  });
+export function LoginView() {
+  const [form, setForm] = useState({ email: '', password: '' });
 
-  function update<K extends keyof SignupForm>(key: K, value: string) {
+  function update(key: 'email' | 'password', value: string) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
@@ -38,7 +26,7 @@ export function RegisterView() {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    // TODO: create the host account via lib/api.ts once the backend is wired. Stub for now.
+    // TODO: authenticate via lib/api.ts once the backend is wired. Stub for now.
   }
 
   const inputClass =
@@ -48,29 +36,32 @@ export function RegisterView() {
     <main className="relative grid min-h-screen lg:grid-cols-2">
       <AuthAside />
 
-      {/* Right: host signup form. */}
+      {/* Right: host login form. */}
       <section className="flex flex-col justify-center px-6 py-12 sm:px-12">
         <div className="mx-auto w-full max-w-md">
           <Logo className="h-8 w-auto" />
 
           <h1 className="mt-8 font-heading text-2xl font-bold tracking-tight text-text sm:text-3xl">
-            Sign up as a host
+            Welcome back
           </h1>
           <p className="mt-2 text-sm text-text-secondary">
-            Already have an account?{' '}
-            <Link href="/auth/login" className="font-medium text-primary hover:text-primary-hover">
-              Log in
+            Don&apos;t have an account?{' '}
+            <Link
+              href="/auth/register"
+              className="font-medium text-primary hover:text-primary-hover"
+            >
+              Sign up
             </Link>
           </p>
 
-          {/* Google signup */}
+          {/* Google login */}
           <button
             type="button"
             onClick={handleGoogle}
             className="mt-7 inline-flex h-11 w-full items-center justify-center gap-2.5 rounded-lg border border-border bg-surface text-sm font-semibold text-text transition-colors hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <GoogleIcon />
-            Sign up with Google
+            Log in with Google
           </button>
 
           {/* Divider */}
@@ -83,47 +74,16 @@ export function RegisterView() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="firstName" className="sr-only">
-                  First name
-                </label>
-                <input
-                  id="firstName"
-                  autoComplete="given-name"
-                  required
-                  placeholder="First name *"
-                  value={form.firstName}
-                  onChange={(e) => update('firstName', e.target.value)}
-                  className={inputClass}
-                />
-              </div>
-              <div>
-                <label htmlFor="lastName" className="sr-only">
-                  Last name
-                </label>
-                <input
-                  id="lastName"
-                  autoComplete="family-name"
-                  required
-                  placeholder="Last name *"
-                  value={form.lastName}
-                  onChange={(e) => update('lastName', e.target.value)}
-                  className={inputClass}
-                />
-              </div>
-            </div>
-
             <div>
               <label htmlFor="email" className="sr-only">
-                Work email
+                Email
               </label>
               <input
                 id="email"
                 type="email"
                 autoComplete="email"
                 required
-                placeholder="Your work email *"
+                placeholder="Email *"
                 value={form.email}
                 onChange={(e) => update('email', e.target.value)}
                 className={inputClass}
@@ -137,28 +97,27 @@ export function RegisterView() {
               <input
                 id="password"
                 type="password"
-                autoComplete="new-password"
+                autoComplete="current-password"
                 required
-                minLength={8}
                 placeholder="Password *"
                 value={form.password}
                 onChange={(e) => update('password', e.target.value)}
                 className={inputClass}
               />
+              <div className="mt-1.5 text-right">
+                <Link
+                  href="#"
+                  className="text-xs font-medium text-primary hover:text-primary-hover"
+                >
+                  Forgot password?
+                </Link>
+              </div>
             </div>
 
             <Button type="submit" variant="primary" size="lg" className="w-full">
-              Create account
+              Log in
             </Button>
           </form>
-
-          <p className="mt-5 text-center text-xs text-text-secondary">
-            By creating an account, you agree to our{' '}
-            <Link href="#" className="text-primary hover:text-primary-hover">
-              Terms &amp; Conditions
-            </Link>
-            .
-          </p>
         </div>
       </section>
     </main>

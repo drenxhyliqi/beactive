@@ -7,14 +7,15 @@
 export function GlowBelow({ className }: { className?: string }) {
   return (
     <div aria-hidden className={`pointer-events-none absolute inset-x-0 z-0 ${className ?? ''}`}>
-      {/* wide, faded halo */}
+      {/* wide, faded halo — centred below the section edge so only its top bleeds up. A modest
+          blur (mobile-safe, unlike the 150-300px blurs that froze the page) dissolves the edge. */}
       <div
-        className="absolute bottom-[-8rem] left-1/2 h-[40rem] w-[80rem] max-w-[180%] -translate-x-1/2 rounded-[50%] opacity-40"
+        className="absolute bottom-[-24rem] left-1/2 h-[40rem] w-[80rem] max-w-[180%] -translate-x-1/2 rounded-[50%] opacity-40 blur-3xl"
         style={{ background: 'radial-gradient(closest-side, var(--primary-light), transparent 78%)' }}
       />
-      {/* slightly tighter, warmer core */}
+      {/* slightly tighter, warmer core, also pushed below the edge */}
       <div
-        className="absolute bottom-[-3rem] left-1/2 h-[24rem] w-[44rem] max-w-[150%] -translate-x-1/2 rounded-[50%] opacity-45"
+        className="absolute bottom-[-15rem] left-1/2 h-[24rem] w-[44rem] max-w-[150%] -translate-x-1/2 rounded-[50%] opacity-45 blur-3xl"
         style={{ background: 'radial-gradient(closest-side, var(--primary), transparent 72%)' }}
       />
     </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   COOKIE_CATEGORIES,
   COOKIE_SETTINGS_EVENT,
@@ -55,6 +55,7 @@ export function CookieConsent() {
     analytics: false,
     ads: false,
   });
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const existing = readConsent();
@@ -69,6 +70,26 @@ export function CookieConsent() {
     window.addEventListener(COOKIE_SETTINGS_EVENT, openPanel);
     return () => window.removeEventListener(COOKIE_SETTINGS_EVENT, openPanel);
   }, []);
+
+  // While the bottom banner is showing, reserve matching space at the end of the page so it
+  // never covers the last bit of content (e.g. the Manage button on /cookies).
+  useEffect(() => {
+    const showingBanner = visible && !open;
+    if (!showingBanner) {
+      document.body.style.paddingBottom = '';
+      return;
+    }
+    const apply = () => {
+      const h = bannerRef.current?.offsetHeight ?? 0;
+      document.body.style.paddingBottom = h ? `${h}px` : '';
+    };
+    apply();
+    window.addEventListener('resize', apply);
+    return () => {
+      window.removeEventListener('resize', apply);
+      document.body.style.paddingBottom = '';
+    };
+  }, [visible, open]);
 
   function persist(next: CookiePrefs) {
     writeConsent(next);
@@ -87,7 +108,7 @@ export function CookieConsent() {
     <>
       {/* First-visit banner */}
       {visible && !open && (
-        <div className="fixed inset-x-0 bottom-0 z-[90] p-4">
+        <div ref={bannerRef} className="fixed inset-x-0 bottom-0 z-[90] p-4">
           <div className="mx-auto flex max-w-3xl flex-col gap-3 rounded-2xl border border-border bg-surface p-4 shadow-xl sm:flex-row sm:items-center sm:gap-4">
             <p className="text-sm text-text-secondary">
               We use{' '}
@@ -104,15 +125,19 @@ export function CookieConsent() {
               </button>
               .
             </p>
-            <div className="flex shrink-0 gap-2">
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:shrink-0">
               <button
                 type="button"
                 onClick={rejectAll}
-                className="inline-flex h-10 items-center justify-center rounded-2xl border border-border px-4 text-sm font-medium text-text transition-colors hover:bg-primary-soft"
+                className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-border px-4 text-sm font-medium text-text transition-colors hover:bg-primary-soft sm:w-auto"
               >
                 Reject
               </button>
-              <button type="button" onClick={acceptAll} className="btn-gradient h-10 rounded-2xl px-5 text-sm">
+              <button
+                type="button"
+                onClick={acceptAll}
+                className="btn-gradient h-10 w-full rounded-2xl px-5 text-sm sm:w-auto"
+              >
                 Accept all
               </button>
             </div>

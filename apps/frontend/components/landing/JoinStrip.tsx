@@ -1,12 +1,15 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
+import { QrCode } from 'lucide-react';
 
-/** Format a raw code into spaced pairs for display: "X4K9P2" → "X4 K9 P2". */
-function formatCode(raw: string): string {
-  return raw.replace(/(.{2})/g, '$1 ').trim();
-}
+// Camera scanner is loaded only when the user taps "Scan" — keeps it off the initial bundle.
+const QrScannerModal = dynamic(
+  () => import('./QrScannerModal').then((m) => m.QrScannerModal),
+  { ssr: false }
+);
 
 /**
  * Audience entry band. A teaser for the real /join flow (built in Step 6): it formats the
@@ -15,6 +18,9 @@ function formatCode(raw: string): string {
 export function JoinStrip() {
   const router = useRouter();
   const [code, setCode] = useState('');
+  const [focused, setFocused] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   function handleChange(value: string) {
     setCode(value.replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, 6));
@@ -47,30 +53,60 @@ export function JoinStrip() {
           <h2 className="font-heading text-3xl font-bold tracking-tight text-text sm:text-4xl">
             In the audience?
           </h2>
+          
           <p className="text-text-secondary">
             Enter the 6-character code from the screen — no account needed.
           </p>
 
-          <form
-            onSubmit={handleSubmit}
-            className="flex w-full flex-col gap-3 sm:flex-row sm:items-center"
-          >
-            <label htmlFor="join-code" className="sr-only">
-              Event code
-            </label>
-            <input
-              id="join-code"
-              inputMode="text"
-              autoComplete="off"
-              placeholder="xx xx xx"
-              value={formatCode(code)}
-              onChange={(e) => handleChange(e.target.value)}
-              className="h-[4.5rem] flex-1 rounded-2xl border border-border bg-surface px-5 text-center font-mono text-xl font-bold uppercase tracking-[0.35em] text-text backdrop-blur transition-all duration-300 placeholder:font-mono placeholder:text-text-secondary focus:placeholder:text-transparent focus-visible:border-primary-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light focus-visible:ring-offset-0 focus-visible:shadow-[0_0_36px_-6px_color-mix(in_srgb,var(--primary-light)_70%,transparent)]"
-            />
+          <form onSubmit={handleSubmit} className="w-full">
+            {/* Segmented 6-character code: one hidden field drives six animated cells. */}
+            <div className="relative" onClick={() => inputRef.current?.focus()}>
+              <div className="grid grid-cols-6 gap-2 sm:gap-3" aria-hidden>
+                {Array.from({ length: 6 }).map((_, i) => {
+                  const char = code[i] ?? '';
+                  const isFilled = i < code.length;
+                  const isActive =
+                    focused && (i === code.length || (code.length === 6 && i === 5));
+                  return (
+                    <div
+                      key={i}
+                      className={`flex aspect-square items-center justify-center rounded-2xl border bg-surface text-xl font-bold uppercase text-text transition-all duration-200 sm:text-2xl ${
+                        isActive
+                          ? 'border-primary-light shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary-light)_25%,transparent)]'
+                          : isFilled
+                            ? 'border-primary-light'
+                            : 'border-border'
+                      }`}
+                    >
+                      {char ? (
+                        <span>{char}</span>
+                      ) : isActive ? (
+                        <span className="h-7 w-0.5 animate-pulse rounded-full bg-primary-light" />
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <input
+                ref={inputRef}
+                id="join-code"
+                aria-label="Event code"
+                inputMode="text"
+                autoComplete="one-time-code"
+                maxLength={6}
+                value={code}
+                onChange={(e) => handleChange(e.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              />
+            </div>
+
             <button
               type="submit"
               disabled={code.length < 6}
-              className="inline-flex h-12 items-center justify-center rounded-2xl px-6 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-50 disabled:brightness-100"
+              className="mt-4 inline-flex h-14 w-full items-center justify-center rounded-2xl px-6 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-50 disabled:brightness-100"
               style={{
                 backgroundImage:
                   'linear-gradient(120deg, var(--primary), var(--accent) 70%, var(--primary-light))',
@@ -79,9 +115,38 @@ export function JoinStrip() {
             >
               Join
             </button>
+
+            {/* Divider */}
+            <div className="my-4 flex items-center gap-3">
+              <span className="h-px flex-1 bg-border" />
+              <span className="text-xs font-medium uppercase tracking-wide text-text-secondary">
+                or
+              </span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+
+            {/* Scan a QR code instead — opens the camera. */}
+            <button
+              type="button"
+              onClick={() => setScanning(true)}
+              className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-2xl border border-border bg-surface text-base font-semibold text-text transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            >
+              <QrCode className="h-5 w-5" />
+              Scan the QR code
+            </button>
           </form>
         </div>
       </div>
+
+      {scanning && (
+        <QrScannerModal
+          onDetect={(scanned) => {
+            setScanning(false);
+            router.push(`/join/${scanned}`);
+          }}
+          onClose={() => setScanning(false)}
+        />
+      )}
     </section>
   );
 }

@@ -32,7 +32,7 @@ export function Logo({ className }: { className?: string }) {
       height={36}
       priority
       onError={() => setFailed(true)}
-      className={cn('h-8 w-auto', className)}
+      className={cn('h-8 w-auto object-contain', className)}
     />
   );
 }

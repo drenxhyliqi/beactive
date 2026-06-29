@@ -1,26 +1,15 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
+import jsQR from 'jsqr';
 
-interface DetectedBarcode {
-  rawValue: string;
-}
-interface BarcodeDetectorLike {
-  detect(source: CanvasImageSource): Promise<DetectedBarcode[]>;
-}
-declare global {
-  interface Window {
-    BarcodeDetector?: new (opts?: { formats?: string[] }) => BarcodeDetectorLike;
-  }
-}
-
-type ScanError = 'unsupported' | 'denied' | null;
+type Status = 'starting' | 'scanning' | 'denied' | 'nocamera' | 'unsupported';
 
 /**
- * Lightweight in-page QR scanner: opens the rear camera and reads a 6-character event code via the
- * native BarcodeDetector API (no library, so no bundle cost). Lazy-loaded by JoinStrip, so it only
- * ships when the user taps "Scan". Browsers without BarcodeDetector get a graceful fallback.
+ * In-page QR scanner: opens the rear camera and decodes a 6-character event code with jsQR (a
+ * tiny, cross-browser decoder — works on desktop too, unlike the native BarcodeDetector API).
+ * Lazy-loaded by JoinStrip, so neither this nor jsQR is in the initial bundle.
  */
 export function QrScannerModal({
   onDetect,
@@ -30,29 +19,29 @@ export function QrScannerModal({
   onClose: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [error, setError] = useState<ScanError>(null);
+  const [status, setStatus] = useState<Status>('starting');
 
   useEffect(() => {
     let stream: MediaStream | null = null;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let stopped = false;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
     async function start() {
-      const Detector = typeof window !== 'undefined' ? window.BarcodeDetector : undefined;
-      if (!Detector || !navigator.mediaDevices?.getUserMedia) {
-        setError('unsupported');
+      if (!navigator.mediaDevices?.getUserMedia || !ctx) {
+        setStatus('unsupported');
         return;
       }
-
-      let detector: BarcodeDetectorLike;
       try {
-        detector = new Detector({ formats: ['qr_code'] });
         stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'environment' },
           audio: false,
         });
-      } catch {
-        if (!stopped) setError('denied');
+      } catch (e) {
+        if (stopped) return;
+        const name = e instanceof DOMException ? e.name : '';
+        setStatus(name === 'NotFoundError' || name === 'OverconstrainedError' ? 'nocamera' : 'denied');
         return;
       }
       if (stopped) {
@@ -68,20 +57,24 @@ export function QrScannerModal({
       } catch {
         /* muted + playsInline still plays even if the promise rejects */
       }
+      setStatus('scanning');
 
-      const tick = async () => {
-        if (stopped || !videoRef.current) return;
-        try {
-          const codes = await detector.detect(videoRef.current);
-          const match = codes[0]?.rawValue.toUpperCase().match(/[A-Z0-9]{6}/);
+      const tick = () => {
+        if (stopped) return;
+        const v = videoRef.current;
+        if (v && v.videoWidth > 0) {
+          canvas.width = v.videoWidth;
+          canvas.height = v.videoHeight;
+          ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+          const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const result = jsQR(data, width, height, { inversionAttempts: 'dontInvert' });
+          const match = result?.data.toUpperCase().match(/[A-Z0-9]{6}/);
           if (match) {
             onDetect(match[0]);
             return;
           }
-        } catch {
-          /* ignore per-frame detect errors */
         }
-        timer = setTimeout(tick, 250);
+        timer = setTimeout(tick, 200);
       };
       tick();
     }
@@ -93,6 +86,8 @@ export function QrScannerModal({
       stream?.getTracks().forEach((t) => t.stop());
     };
   }, [onDetect]);
+
+  const isError = status === 'denied' || status === 'nocamera' || status === 'unsupported';
 
   return (
     <div
@@ -110,15 +105,21 @@ export function QrScannerModal({
         <X className="h-5 w-5" />
       </button>
 
-      {error ? (
+      {isError ? (
         <div className="max-w-xs text-center text-white">
           <p className="font-heading text-lg font-bold">
-            {error === 'denied' ? 'Camera blocked' : 'Scanning not supported'}
+            {status === 'denied'
+              ? 'Camera blocked'
+              : status === 'nocamera'
+                ? 'No camera found'
+                : 'Camera not available'}
           </p>
           <p className="mt-2 text-sm text-white/70">
-            {error === 'denied'
-              ? 'Allow camera access in your browser, or type the 6-character code instead.'
-              : 'This browser can’t scan in-page — type the 6-character code instead.'}
+            {status === 'denied'
+              ? 'Allow camera access in your browser, then try again — or type the 6-character code instead.'
+              : status === 'nocamera'
+                ? 'We couldn’t find a camera on this device. Type the 6-character code instead.'
+                : 'This browser can’t open the camera here. Type the 6-character code instead.'}
           </p>
           <button
             type="button"
@@ -130,9 +131,15 @@ export function QrScannerModal({
         </div>
       ) : (
         <>
-          <div className="relative aspect-square w-full max-w-xs overflow-hidden rounded-3xl">
+          <div className="relative aspect-square w-full max-w-xs overflow-hidden rounded-3xl bg-black">
             <video ref={videoRef} playsInline muted className="h-full w-full object-cover" />
             <div className="pointer-events-none absolute inset-6 rounded-2xl border-2 border-white/70" />
+            {status === 'starting' && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-white/80">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <span className="text-sm">Starting camera…</span>
+              </div>
+            )}
           </div>
           <p className="mt-5 text-center text-sm text-white/80">
             Point your camera at the event QR code

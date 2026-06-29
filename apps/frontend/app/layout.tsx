@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import { Providers } from '@/components/Providers';
-import { PageLoader } from '@/components/PageLoader';
+import { CookieConsent } from '@/components/cookies/CookieConsent';
 import './globals.css';
 
 const inter = Inter({
@@ -54,7 +54,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jakarta.variable}`}>
       <body>
         <Providers>{children}</Providers>
-        <PageLoader />
+        <CookieConsent />
       </body>
     </html>
   );

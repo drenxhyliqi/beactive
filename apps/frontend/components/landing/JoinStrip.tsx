@@ -65,7 +65,7 @@ export function JoinStrip() {
               placeholder="xx xx xx"
               value={formatCode(code)}
               onChange={(e) => handleChange(e.target.value)}
-              className="h-[4.5rem] flex-1 rounded-2xl border border-border bg-surface px-5 text-center font-mono text-xl font-bold uppercase tracking-[0.35em] text-text backdrop-blur transition-all duration-300 placeholder:font-mono placeholder:text-text-secondary focus-visible:border-primary-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light focus-visible:ring-offset-0 focus-visible:shadow-[0_0_36px_-6px_color-mix(in_srgb,var(--primary-light)_70%,transparent)]"
+              className="h-[4.5rem] flex-1 rounded-2xl border border-border bg-surface px-5 text-center font-mono text-xl font-bold uppercase tracking-[0.35em] text-text backdrop-blur transition-all duration-300 placeholder:font-mono placeholder:text-text-secondary focus:placeholder:text-transparent focus-visible:border-primary-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light focus-visible:ring-offset-0 focus-visible:shadow-[0_0_36px_-6px_color-mix(in_srgb,var(--primary-light)_70%,transparent)]"
             />
             <button
               type="submit"

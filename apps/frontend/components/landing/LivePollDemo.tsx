@@ -26,7 +26,7 @@ const scenes: Scene[] = [
   },
   {
     kind: 'Quiz',
-    badge: 'warning',
+    badge: 'default',
     question: 'What year did we launch?',
     options: [
       { label: '2019', pct: 18, votes: 54 },
@@ -36,7 +36,7 @@ const scenes: Scene[] = [
   },
   {
     kind: 'Q&A',
-    badge: 'info',
+    badge: 'default',
     question: 'Top questions from the room',
     items: [
       { text: 'Will the slides be shared afterwards?', up: 38 },
@@ -65,7 +65,7 @@ function Bar({ option, delay }: { option: BarOption; delay: number }) {
   return (
     <div>
       <div className="mb-1 flex items-center justify-between text-sm">
-        <span className={option.correct ? 'font-semibold text-success' : 'text-text'}>
+        <span className={option.correct ? 'font-semibold text-highlight' : 'text-text'}>
           {option.label}
         </span>
         <span className="tabular-nums text-text-secondary">
@@ -74,7 +74,7 @@ function Bar({ option, delay }: { option: BarOption; delay: number }) {
       </div>
       <div className="h-2.5 w-full overflow-hidden rounded-full bg-primary-soft">
         <motion.div
-          className={`h-full rounded-full ${option.correct ? 'bg-success' : 'bg-primary'}`}
+          className={`h-full rounded-full ${option.correct ? 'bg-highlight' : 'bg-primary'}`}
           initial={{ width: 0 }}
           animate={{ width: `${option.pct}%` }}
           transition={{ duration: 1.1, ease: 'easeOut', delay }}

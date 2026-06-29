@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, QrCode } from 'lucide-react';
 import { GlowBelow, GlowTint } from './GlowBelow';
-import { FloatingQuotes } from './FloatingQuotes';
+import { FloatingQuotesLazy } from './FloatingQuotesLazy';
 import { Reveal } from './Reveal';
 
 /**
@@ -13,7 +13,7 @@ export function Hero() {
   return (
     <section className="relative isolate overflow-hidden">
       <GlowBelow className="inset-0" />
-      <FloatingQuotes />
+      <FloatingQuotesLazy />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-28 text-center sm:py-36">
         <Reveal>
@@ -49,7 +49,7 @@ export function Hero() {
       </div>
 
       {/* Soft sheen above the text so the light from below appears to graze the headline. */}
-      <GlowTint className="top-[90%] z-20 h-72 w-[44rem] max-w-[120%] -translate-y-1/2 opacity-5" />
+      <GlowTint className="top-[100%] z-20 h-72 w-[44rem] max-w-[120%] -translate-y-1/2 opacity-5" />
     </section>
   );
 }

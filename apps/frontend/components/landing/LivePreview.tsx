@@ -1,4 +1,4 @@
-import { LivePollDemo } from './LivePollDemo';
+import { LivePollDemoLazy } from './LivePollDemoLazy';
 import { Reveal } from './Reveal';
 
 /**
@@ -30,7 +30,7 @@ export function LivePreview() {
 
         {/* Right: animated demo */}
         <Reveal className="flex justify-center lg:justify-end">
-          <LivePollDemo />
+          <LivePollDemoLazy />
         </Reveal>
       </div>
     </section>

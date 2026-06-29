@@ -30,6 +30,13 @@ export function JoinStrip() {
       <div
         className="relative overflow-hidden rounded-3xl px-6 py-14 text-center shadow-[0_30px_80px_-30px_color-mix(in_srgb,var(--primary)_65%,transparent)] ring-1 ring-inset ring-white/10"
       >
+        {/* concentrated core of the glow, just below the card edge */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-14 left-1/2 h-72 w-[34rem] -translate-x-1/2 rounded-full opacity-70 blur-6xl"
+          // style={{ background: 'radial-gradient(circle, var(--primary-light), transparent 70%)' }}
+        />
+
         {/* fine grain to break up the flat fill */}
         <div
           aria-hidden
@@ -58,12 +65,12 @@ export function JoinStrip() {
               placeholder="xx xx xx"
               value={formatCode(code)}
               onChange={(e) => handleChange(e.target.value)}
-              className="h-[4.5rem] flex-1 rounded-2xl border border-border bg-surface px-5 text-center font-mono text-xl font-bold uppercase tracking-[0.35em] text-text backdrop-blur transition-all duration-300 placeholder:font-mono placeholder:text-text-secondary focus-visible:border-primary-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light focus-visible:ring-offset-0 focus-visible:shadow-[0_0_36px_-6px_color-mix(in_srgb,var(--primary-light)_70%,transparent)] sm:h-14"
+              className="h-[4.5rem] flex-1 rounded-2xl border border-border bg-surface px-5 text-center font-mono text-xl font-bold uppercase tracking-[0.35em] text-text backdrop-blur transition-all duration-300 placeholder:font-mono placeholder:text-text-secondary focus-visible:border-primary-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light focus-visible:ring-offset-0 focus-visible:shadow-[0_0_36px_-6px_color-mix(in_srgb,var(--primary-light)_70%,transparent)]"
             />
             <button
               type="submit"
               disabled={code.length < 6}
-              className="inline-flex h-12 items-center justify-center rounded-2xl px-6 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-50 disabled:brightness-100 sm:h-14"
+              className="inline-flex h-12 items-center justify-center rounded-2xl px-6 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-light disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-50 disabled:brightness-100"
               style={{
                 backgroundImage:
                   'linear-gradient(120deg, var(--primary), var(--accent) 70%, var(--primary-light))',

@@ -1,0 +1,237 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Brand palette — the single source of truth for color. Never hardcode these
+   hex values elsewhere; use the CSS variable or its Tailwind token instead.
+--------------------------------------------------------------------------- */
+:root {
+  --primary: #6d28d9;
+  --primary-hover: #5b21b6;
+  --primary-light: #8b5cf6;
+  --primary-dark: #2f1f52;
+  --primary-soft: #ede9fe;
+  --secondary: #4f46e5;
+  --accent: #7c3aed;
+  --highlight: #06b6d4;
+  --background: #fafafc;
+  --surface: #ffffff;
+  --text: #18181b;
+  --text-secondary: #71717a;
+  --border: #e4e4e7;
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #dc2626;
+  --info: #2563eb;
+
+  /* Constant rich-black for always-dark surfaces (e.g. the audience join card). Intentionally
+     NOT redefined in `.dark` — it must stay the same black in both themes, never inverting. */
+  --ink: #0b0b12;
+
+  color-scheme: light;
+}
+
+/* Dark theme — the same tokens, redefined. Because every component reads these
+   variables, flipping the `.dark` class on <html> recolors the whole app. This block
+   (with :root above) is the single home for palette hex values. */
+.dark {
+  --primary: #8b5cf6;
+  --primary-hover: #a78bfa;
+  --primary-light: #a78bfa;
+  --primary-soft: #241b3a;
+  --secondary: #818cf8;
+  --accent: #a78bfa;
+  --highlight: #22d3ee;
+  --background: #0b0b12;
+  --surface: #15151e;
+  --text: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --border: #2a2a35;
+  --success: #22c55e;
+  --warning: #fbbf24;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--text);
+    font-family: var(--font-inter), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-jakarta), var(--font-inter), system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Base component styles. These are convenience classes derived from the palette;
+   the shared @beactive/ui primitives are the preferred building blocks.
+--------------------------------------------------------------------------- */
+@layer components {
+  .btn {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    @apply disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-hover focus-visible:ring-primary;
+  }
+  .btn-secondary {
+    @apply btn bg-secondary text-white hover:opacity-90 focus-visible:ring-secondary;
+  }
+  .btn-outline {
+    @apply btn border border-border bg-surface text-text hover:bg-primary-soft focus-visible:ring-primary;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-text hover:bg-primary-soft focus-visible:ring-primary;
+  }
+  .btn-danger {
+    @apply btn bg-danger text-white hover:opacity-90 focus-visible:ring-danger;
+  }
+
+  .card {
+    @apply rounded-xl border border-border bg-surface p-6 shadow-sm;
+  }
+
+  .input {
+    @apply h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm text-text;
+    @apply placeholder:text-text-secondary;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1;
+  }
+
+  /* Fancy gradient CTA — brand gradient pill with a soft glow that lifts on hover. */
+  .btn-gradient {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 font-semibold text-white transition-all duration-300;
+    background-image: linear-gradient(120deg, var(--primary), var(--accent) 70%, var(--primary-light));
+    box-shadow: 0 10px 26px -8px color-mix(in srgb, var(--primary) 60%, transparent);
+  }
+  .btn-gradient:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow: 0 16px 34px -8px color-mix(in srgb, var(--primary) 75%, transparent);
+  }
+  .btn-gradient:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Glassy secondary pill that glows on hover. */
+  .btn-glass {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-border px-6 font-semibold text-text backdrop-blur transition-all duration-300;
+    background-color: color-mix(in srgb, var(--surface) 70%, transparent);
+  }
+  .btn-glass:hover {
+    @apply border-primary text-primary;
+    box-shadow: 0 10px 26px -10px color-mix(in srgb, var(--primary) 45%, transparent);
+  }
+  .btn-glass:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Frosted glass surface used across the landing page. */
+  .glass {
+    background-color: color-mix(in srgb, var(--surface) 72%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 1px 2px color-mix(in srgb, var(--text) 5%, transparent),
+      0 12px 32px -12px color-mix(in srgb, var(--primary) 18%, transparent);
+  }
+
+  /* Brand gradient text for accent words in headlines. */
+  .text-gradient {
+    background-image: linear-gradient(
+      100deg,
+      var(--primary) 0%,
+      var(--accent) 45%,
+      var(--primary-dark) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+}
+
+/* ---------------------------------------------------------------------------
+   Aurora ambient background — slow-drifting blurred blobs in the palette.
+   GPU-friendly transforms only; disabled under reduced-motion.
+--------------------------------------------------------------------------- */
+@layer utilities {
+  .aurora-drift-a {
+    animation: aurora-drift-a 22s ease-in-out infinite alternate;
+  }
+  .aurora-drift-b {
+    animation: aurora-drift-b 26s ease-in-out infinite alternate;
+  }
+  .aurora-drift-c {
+    animation: aurora-drift-c 30s ease-in-out infinite alternate;
+  }
+
+  /* Tiling film-grain noise (desaturated fractal turbulence). Overlay it at low opacity. */
+  .grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+  }
+}
+
+@keyframes aurora-drift-a {
+  from {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(8%, 6%, 0) scale(1.15);
+  }
+}
+@keyframes aurora-drift-b {
+  from {
+    transform: translate3d(6%, 2%, 0) scale(1.1);
+  }
+  to {
+    transform: translate3d(-8%, -6%, 0) scale(0.95);
+  }
+}
+@keyframes aurora-drift-c {
+  from {
+    transform: translate3d(0, 4%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(4%, -8%, 0) scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-drift-a,
+  .aurora-drift-b,
+  .aurora-drift-c {
+    animation: none;
+  }
+}

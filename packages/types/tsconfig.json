@@ -1,0 +1,7 @@
+{
+  "extends": "@beactive/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts"]
+}
